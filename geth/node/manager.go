@@ -50,6 +50,9 @@ type NodeManager struct {
 	whisperService *whisper.Whisper   // reference to Whisper service
 	lesService     *les.LightEthereum // reference to LES service
 	rpcClient      *rpc.Client        // reference to RPC client
+
+	register *Register
+	peerPool *PeerPool
 }
 
 // NewNodeManager makes new instance of node manager
@@ -98,6 +101,16 @@ func (m *NodeManager) startNode(config *params.NodeConfig) error {
 		log.Error("Failed to create an RPC client", "error", err)
 		return RPCClientError(err)
 	}
+	m.register = NewResigter(m.config.RegisterTopics...)
+	m.peerPool = NewPeerPool(m.config.RequireTopics, defaultFastSync, defaultSlowSync)
+	if ethNode.Server().DiscV5 != nil {
+		if err := m.register.Start(ethNode.Server()); err != nil {
+			return err
+		}
+		if err := m.peerPool.Start(ethNode.Server()); err != nil {
+			return err
+		}
+	}
 	// populate static peers exits when node stopped
 	go func() {
 		if err := m.PopulateStaticPeers(); err != nil {
@@ -122,6 +135,8 @@ func (m *NodeManager) stopNode() error {
 	if err := m.node.Stop(); err != nil {
 		return err
 	}
+	m.register.Stop()
+	m.peerPool.Stop()
 	m.node = nil
 	m.config = nil
 	m.lesService = nil

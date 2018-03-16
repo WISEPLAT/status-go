@@ -11,6 +11,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/ethereum/go-ethereum/p2p/discv5"
 	"github.com/status-im/status-go/cmd/statusd/debug"
 	"github.com/status-im/status-go/geth/api"
 	"github.com/status-im/status-go/geth/common"
@@ -67,9 +68,15 @@ var (
 	firebaseAuth = flag.String("shh.firebaseauth", "", "FCM Authorization Key used for sending Push Notifications")
 
 	syncAndExit = flag.Int("sync-and-exit", -1, "Timeout in minutes for blockchain sync and exit, zero means no timeout unless sync is finished")
+
+	searchTopics   topicLimitsFlag
+	registerTopics topicsFlag
 )
 
 func main() {
+	flag.Var(&searchTopics, "stopic", "Topic that will be searched in discovery v5, e.g (mailserver=1,1)")
+	flag.Var(&registerTopics, "rtopic", "Topic that will be registered using discovery v5.")
+
 	flag.Usage = printUsage
 	flag.Parse()
 
@@ -225,6 +232,8 @@ func makeNodeConfig() (*params.NodeConfig, error) {
 	}
 
 	nodeConfig.Discovery = *discovery
+	nodeConfig.RequireTopics = map[discv5.Topic]params.Limits(searchTopics)
+	nodeConfig.RegisterTopics = []discv5.Topic(registerTopics)
 
 	// Even if standalone is true and discovery is disabled,
 	// it's possible to use bootnodes in NodeManager.PopulateStaticPeers().
