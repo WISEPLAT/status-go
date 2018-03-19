@@ -91,14 +91,12 @@ func defaultEmbeddedNodeConfig(config *params.NodeConfig) *node.Config {
 		Name:              config.Name,
 		Version:           config.Version,
 		P2P: p2p.Config{
-			NoDiscovery:      true,
-			DiscoveryV5:      config.Discovery,
-			BootstrapNodes:   nil,
-			BootstrapNodesV5: nil,
-			ListenAddr:       config.ListenAddr,
-			NAT:              nat.Any(),
-			MaxPeers:         config.MaxPeers,
-			MaxPendingPeers:  config.MaxPendingPeers,
+			NoDiscovery:     true,
+			DiscoveryV5:     config.Discovery,
+			ListenAddr:      config.ListenAddr,
+			NAT:             nat.Any(),
+			MaxPeers:        config.MaxPeers,
+			MaxPendingPeers: config.MaxPendingPeers,
 		},
 		IPCPath:          makeIPCPath(config),
 		HTTPCors:         []string{"*"},
@@ -116,7 +114,7 @@ func defaultEmbeddedNodeConfig(config *params.NodeConfig) *node.Config {
 	}
 
 	if config.BootClusterConfig.Enabled {
-		nc.P2P.BootstrapNodes = makeBootstrapNodes(config.BootClusterConfig.BootNodes)
+		nc.P2P.BootstrapNodesV5 = makeBootstrapNodes(config.BootClusterConfig.BootNodes)
 	}
 
 	return nc
