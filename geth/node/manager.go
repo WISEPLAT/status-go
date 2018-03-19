@@ -111,12 +111,6 @@ func (m *NodeManager) startNode(config *params.NodeConfig) error {
 			return err
 		}
 	}
-	// populate static peers exits when node stopped
-	go func() {
-		if err := m.PopulateStaticPeers(); err != nil {
-			log.Error("Static peers population", "error", err)
-		}
-	}()
 	return nil
 }
 

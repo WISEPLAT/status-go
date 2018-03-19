@@ -16,7 +16,7 @@ import (
 	"github.com/ethereum/go-ethereum/les"
 	"github.com/ethereum/go-ethereum/node"
 	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/discover"
+	"github.com/ethereum/go-ethereum/p2p/discv5"
 	"github.com/ethereum/go-ethereum/p2p/nat"
 	"github.com/ethereum/go-ethereum/whisper/mailserver"
 	whisper "github.com/ethereum/go-ethereum/whisper/whisperv6"
@@ -215,10 +215,10 @@ func makeWSHost(config *params.NodeConfig) string {
 }
 
 // makeBootstrapNodes returns default (hence bootstrap) list of peers
-func makeBootstrapNodes(enodes []string) []*discover.Node {
-	var bootstrapNodes []*discover.Node
+func makeBootstrapNodes(enodes []string) []*discv5.Node {
+	var bootstrapNodes []*discv5.Node
 	for _, enode := range enodes {
-		bootstrapNodes = append(bootstrapNodes, discover.MustParseNode(enode))
+		bootstrapNodes = append(bootstrapNodes, discv5.MustParseNode(enode))
 	}
 
 	return bootstrapNodes

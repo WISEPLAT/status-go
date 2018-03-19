@@ -74,6 +74,7 @@ var (
 )
 
 func main() {
+	searchTopics = topicLimitsFlag{}
 	flag.Var(&searchTopics, "stopic", "Topic that will be searched in discovery v5, e.g (mailserver=1,1)")
 	flag.Var(&registerTopics, "rtopic", "Topic that will be registered using discovery v5.")
 
